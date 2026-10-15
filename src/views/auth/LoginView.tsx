@@ -1,5 +1,5 @@
 import { FormControl, FormLabel } from '@chakra-ui/form-control';
-import { Button, Input, Text } from '@chakra-ui/react';
+import { Button, Text } from '@chakra-ui/react';
 import { BsDiscord } from 'react-icons/bs';
 import { Box, Center, Flex, Grid, Heading } from '@chakra-ui/react';
 import { ReactNode } from 'react';
@@ -17,7 +17,7 @@ export function LoginView() {
       <FormControl>
         <FormLabel>{t['login description']}</FormLabel>
         {bot ? (
-          <a href={`${bot}/login`} target="_self">
+          <a href={`${bot}/auth/discord`} target="_self">
             <Button leftIcon={<BsDiscord />}>{t.login}</Button>
           </a>
         ) : (
