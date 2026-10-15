@@ -5,6 +5,8 @@ import svgrPlugin from 'vite-plugin-svgr';
 import path from 'path';
 
 export default defineConfig({
+  // GitHub Pages hosts this project under /discord-bot-dashboard-2/.
+  base: '/discord-bot-dashboard-2/',
   plugins: [
     react({
       include: ['**/*.tsx', '**/*.jsx'],
