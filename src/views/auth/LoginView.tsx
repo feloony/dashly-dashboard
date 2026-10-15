@@ -1,5 +1,5 @@
 import { FormControl, FormLabel } from '@chakra-ui/form-control';
-import { Button, Input } from '@chakra-ui/react';
+import { Button, Input, Text } from '@chakra-ui/react';
 import { BsDiscord } from 'react-icons/bs';
 import { Box, Center, Flex, Grid, Heading } from '@chakra-ui/react';
 import { ReactNode } from 'react';
@@ -15,10 +15,16 @@ export function LoginView() {
   return (
     <AuthLayout>
       <FormControl>
-        <FormLabel children={t['login description']} />
-        <a href={`${bot}/login`} target="_self">
-          <Button leftIcon={<BsDiscord />} children={t.login} />
-        </a>
+        <FormLabel>{t['login description']}</FormLabel>
+        {bot ? (
+          <a href={`${bot}/login`} target="_self">
+            <Button leftIcon={<BsDiscord />}>{t.login}</Button>
+          </a>
+        ) : (
+          <Text color="red.400">
+            Dashboard API is not configured. Set VITE_API_ENDPOINT in the deployment environment.
+          </Text>
+        )}
       </FormControl>
     </AuthLayout>
   );
@@ -44,7 +50,7 @@ function AuthLayout({ children }: { children: ReactNode }) {
         gap={4}
         py={10}
       >
-        <Heading color="white" fontSize="8xl" children={t.login} />
+        <Heading color="white" fontSize="8xl">{t.login}</Heading>
         <Box pos="relative" p={10} bg={globalBg} rounded="lg">
           {children}
         </Box>

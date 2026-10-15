@@ -1,45 +1,43 @@
 import { deepmerge } from 'deepmerge-ts';
+
 export const orgin = 'http://localhost:3000';
 
 export type ReturnOptions<T> = Options & {
-  /**
-   * Map result if status code is not equal to 200
-   * @param status
-   */
   allowed?: {
     [status: number]: (res: Response) => T;
   };
 };
 
 export type Options = {
-  /**
-   * specify the origin url
-   */
   origin?: string;
   method?: 'GET' | 'POST' | 'PATCH' | 'DELETE';
   contentType?: 'application/json';
   body?: string | FormData;
-
-  /**
-   * throw an error if status code is not equal to 200
-   *
-   * default: true
-   */
   errorOnFail?: boolean;
   init?: RequestInit;
 };
 
-export async function callDefault(url: string, init?: Options) {
-  const options = await parseOptions(url, init);
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    public readonly status: number
+  ) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
 
-  return fetch(options.url, options.request).then((r) => handle(r, init));
+export async function callDefault(url: string, init?: Options) {
+  const options = init ?? {};
+  const request = await parseOptions(url, options);
+  return fetch(request.url, request.request).then((response) => handle(response, options));
 }
 
 export async function callReturn<T>(url: string, init?: ReturnOptions<T>): Promise<T> {
-  const options = await parseOptions(url, init);
-
-  return fetch(options.url, options.request).then((res) =>
-    handleResult<T>(res, init, (res) => res.json())
+  const options = init ?? {};
+  const request = await parseOptions(url, options);
+  return fetch(request.url, request.request).then((response) =>
+    handleResult<T>(response, options, (res) => res.json())
   );
 }
 
@@ -49,37 +47,61 @@ async function handleResult<T>(
   mapper: (res: Response) => Promise<T>
 ): Promise<T> {
   if (!res.ok) {
-    if (options.allowed && options.allowed[res.status]) {
-      return options.allowed[res.status](res);
-    } else handleError(res, options);
+    const allowedResult = options.allowed?.[res.status];
+    if (allowedResult) return allowedResult(res);
+    await handleError(res, options);
   }
 
-  return await mapper(res);
+  return mapper(res);
 }
 
 async function handle(res: Response, options: Options) {
   await handleError(res, options);
-
   return res;
 }
-/** throw error if condition matches */
+
 async function handleError(res: Response, options: Options) {
   if (!res.ok && (options.errorOnFail ?? true)) {
-    const raw = await res.json();
-    throw new Error(raw);
+    throw new ApiError(await readErrorMessage(res), res.status);
   }
 }
 
-async function parseOptions<T extends Options>(url: string, options: T) {
-  const isForm = options.body instanceof FormData;
+async function readErrorMessage(res: Response): Promise<string> {
+  let body = '';
 
+  try {
+    body = await res.text();
+  } catch {
+    // Use the HTTP status as a useful fallback when the response body is unreadable.
+  }
+
+  if (body.trim()) {
+    try {
+      const parsed: unknown = JSON.parse(body);
+      if (typeof parsed === 'string') return parsed;
+      if (parsed && typeof parsed === 'object') {
+        const record = parsed as Record<string, unknown>;
+        const message = record.message ?? record.error ?? record.detail;
+        if (typeof message === 'string' && message.trim()) return message;
+      }
+    } catch {
+      // Non-JSON error bodies (such as proxy HTML) are valid failure responses too.
+    }
+
+    // Avoid flooding the UI with a full HTML error page.
+    return body.trim().replace(/\s+/g, ' ').slice(0, 300);
+  }
+
+  return `Request failed (${res.status}${res.statusText ? `: ${res.statusText}` : ''})`;
+}
+
+async function parseOptions<T extends Options>(url: string, options: T) {
+  const isForm = typeof FormData !== 'undefined' && options.body instanceof FormData;
   const request: RequestInit = {
     method: options.method,
     body: options.body,
     headers: {
-      ...(!isForm && {
-        'Content-Type': options.contentType ?? 'application/json',
-      }),
+      ...(!isForm && { 'Content-Type': options.contentType ?? 'application/json' }),
     },
   };
 

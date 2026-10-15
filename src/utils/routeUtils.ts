@@ -15,34 +15,31 @@ type MatchRoute = (
   layout: NormalLayout;
 };
 
-export function getActiveLayouts(location: Location, layoutes: RootLayout[]): NormalLayout[] {
+export function getActiveLayouts(location: Location, layouts: RootLayout[]): NormalLayout[] {
   function map(layout: NormalLayout): MatchRoute {
     if (layout.index === true) {
-      return {
-        layout: layout,
-        index: true,
-      };
-    } else {
-      return {
-        layout: layout,
-        path: layout.path,
-        children: layout.subLayouts?.map((c) => map(c)),
-      };
+      return { layout, index: true };
     }
+
+    return {
+      layout,
+      path: layout.path,
+      children: layout.subLayouts?.map(map),
+    };
   }
 
-  const routes = layoutes.map((layout) => map(layout));
+  const routes = layouts.map(map);
   const matches = matchRoutes(routes, location.pathname);
 
-  if (matches == null || matches.length === 0) return null;
+  // An unmatched URL (including a 404) has no active layouts.
+  if (!matches?.length) return [];
 
-  return matches.map((m) => m.route.layout);
+  return matches.map((match) => match.route.layout);
 }
 
 export function getActiveLayout(location: Location, layouts: RootLayout[]): NormalLayout | null {
   const matches = getActiveLayouts(location, layouts);
-
-  return matches[matches.length - 1];
+  return matches[matches.length - 1] ?? null;
 }
 
 export function getActiveSidebarItem(
@@ -50,22 +47,21 @@ export function getActiveSidebarItem(
   location: Location
 ): SidebarItemInfo | null {
   const matches = matchRoutes(
-    items.map((item) => ({
-      item,
-      path: item.path,
-    })),
+    items.map((item) => ({ item, path: item.path })),
     location.pathname
   );
-  if (matches == null || matches.length === 0) return null;
+
+  if (!matches?.length) return null;
 
   return matches[matches.length - 1].route.item;
 }
 
-export function useLayoutOverride(layouts: RootLayout[], filter: (item: NormalLayout) => boolean) {
+export function useLayoutOverride(
+  layouts: RootLayout[],
+  filter: (item: NormalLayout) => boolean
+) {
   const location = useLocation();
-  const override = findLast(getActiveLayouts(location, layouts), filter);
-
-  return override;
+  return findLast(getActiveLayouts(location, layouts), filter);
 }
 
 export type NormalLayout = IndexRoute | NestedLayout;

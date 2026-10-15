@@ -1,33 +1,21 @@
-/***
- * Custom types that should be configured by developer
- ***/
-
 import { GuildInfo } from '.';
 
 export type CustomGuildInfo = GuildInfo & {};
 
-/**
- * Define feature ids and it's option types
- */
+/** Only features with implemented dashboard forms should be exposed here. */
 export type CustomFeatures = {
-  music: MusicFeature;
-  gaming: {};
-  'reaction-role': {};
-  meme: {};
   'welcome-message': WelcomeMessageFeature;
 };
 
-/** example only */
 export type WelcomeMessageFeature = {
   channel?: string;
   message: string;
 };
 
-/** example only */
+/** Kept for the unused example component until it is removed from the template. */
 export type MusicFeature = {
   message: string;
   channel?: string;
-
   role?: string;
   color?: string;
   count?: string;
