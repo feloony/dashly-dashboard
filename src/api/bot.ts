@@ -36,10 +36,13 @@ export async function auth() {
 }
 
 export async function logout() {
-  await callDefault('/auth/signout', withBot({ method: 'POST' }));
-  sessionStorage.removeItem(SessionTokenStorage);
-  // Remove the previous persistent token during migration.
-  localStorage.removeItem('ios-session-token');
+  try {
+    await callDefault('/auth/signout', withBot({ method: 'POST' }));
+  } finally {
+    sessionStorage.removeItem(SessionTokenStorage);
+    // Remove the previous persistent token during migration.
+    localStorage.removeItem('ios-session-token');
+  }
 }
 
 /** Get custom guild info from the backend, or null if the bot is not in the guild. */
