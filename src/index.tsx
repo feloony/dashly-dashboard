@@ -46,15 +46,18 @@ function Pages() {
   );
 }
 
-const root = createRoot(document.getElementById('root'));
-root.render(
-  <ChakraProvider theme={theme}>
-    <QueryClientProvider client={client}>
-      <React.StrictMode>
-        <BrowserRouter>
-          <Pages />
-        </BrowserRouter>
-      </React.StrictMode>
-    </QueryClientProvider>
-  </ChakraProvider>
-);
+const rootElement = document.getElementById('root');
+
+if (rootElement) {
+  createRoot(rootElement).render(
+    <ChakraProvider theme={theme}>
+      <QueryClientProvider client={client}>
+        <React.StrictMode>
+          <BrowserRouter basename={import.meta.env.BASE_URL}>
+            <Pages />
+          </BrowserRouter>
+        </React.StrictMode>
+      </QueryClientProvider>
+    </ChakraProvider>
+  );
+}
