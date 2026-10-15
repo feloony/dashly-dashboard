@@ -20,7 +20,7 @@ export function withBot<T extends Options>(init?: T): T {
       ...init?.init,
       headers: {
         ...init?.init?.headers,
-        Authorization: token != null ? `Bearer ${token}` : undefined,
+        ...(token != null ? { Authorization: `Bearer ${token}` } : {}),
       },
       credentials: 'include',
       mode: 'cors',
