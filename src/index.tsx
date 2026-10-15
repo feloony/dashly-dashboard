@@ -51,7 +51,7 @@ root.render(
   <ChakraProvider theme={theme}>
     <QueryClientProvider client={client}>
       <React.StrictMode>
-        <BrowserRouter>
+        <BrowserRouter basename={import.meta.env.BASE_URL}>
           <Pages />
         </BrowserRouter>
       </React.StrictMode>
