@@ -24,23 +24,22 @@ export type GuildChannel = {
   category?: string;
 };
 
-/** Get the dashboard session token if logged in, otherwise return null. */
-export async function auth() {
-  return await callReturn<string | null>(
-    '/auth',
+/** Check the backend's HttpOnly-cookie session. */
+export async function auth(): Promise<string | null> {
+  return await callReturn<{ user: { id: string } } | null>(
+    '/me',
     withBot({
       method: 'GET',
       allowed: { 401: () => null },
     })
-  );
+  ).then((session) => session ? 'cookie-session' : null);
 }
 
 export async function logout() {
   try {
-    await callDefault('/auth/signout', withBot({ method: 'POST' }));
+    await callDefault('/logout', withBot({ method: 'POST' }));
   } finally {
     sessionStorage.removeItem(SessionTokenStorage);
-    // Remove the previous persistent token during migration.
     localStorage.removeItem('ios-session-token');
   }
 }
