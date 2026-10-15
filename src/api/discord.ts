@@ -1,14 +1,15 @@
-import { callReturn, withDiscord } from './core';
+import { bot } from './bot';
 
 export const discord = 'https://discord.com/api/v9';
 
 export type UserInfo = {
   id: string;
   username: string;
+  global_name?: string;
   discriminator: string;
-  avatar: string;
+  avatar: string | null;
   mfa_enabled?: boolean;
-  banner?: string;
+  banner?: string | null;
   accent_color?: number;
   locale?: string;
   flags?: number;
@@ -19,8 +20,14 @@ export type UserInfo = {
 export type Guild = {
   id: string;
   name: string;
-  icon: string;
+  icon: string | null;
   permissions: string;
+  owner?: boolean;
+  botInstalled?: boolean;
+  botStatus?: string;
+  memberCount?: number | null;
+  onlineCount?: number | null;
+  botInviteUrl?: string | null;
 };
 
 export type IconHash = string;
@@ -67,49 +74,62 @@ export enum PermissionFlags {
   SEND_MESSAGES_IN_THREADS = 1 << 38,
   USE_EMBEDDED_ACTIVITIES = 1 << 39,
   MODERATE_MEMBERS = 1 << 40,
+  MANAGE_GUILD_EXPRESSIONS = 1 << 41,
+  USE_SOUNDBOARD = 1 << 42,
+  CREATE_GUILD_EXPRESSIONS = 1 << 43,
+  CREATE_EVENTS = 1 << 44,
+  USE_EXTERNAL_SOUNDS = 1 << 45,
+  SEND_VOICE_MESSAGES = 1 << 46,
+  SEND_POLLS = 1 << 49,
 }
 
-export enum ChannelTypes {
-  GUILD_TEXT = 0,
-  DM = 1,
-  GUILD_VOICE = 2,
-  GROUP_DM = 3,
-  GUILD_CATEGORY = 4,
-  GUILD_ANNOUNCEMENT = 5,
-  ANNOUNCEMENT_THREAD = 10,
-  PUBLIC_THREAD = 11,
-  PRIVATE_THREAD = 12,
-  GUILD_STAGE_VOICE = 13,
-  GUILD_DIRECTORY = 14,
-  GUILD_FORUM = 15,
+async function apiJson<T>(path: string): Promise<T> {
+  if (!bot) throw new Error('Dashboard API is not configured.');
+  const response = await fetch(`${bot}${path}`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: { Accept: 'application/json' },
+    mode: 'cors',
+  });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error('Your Discord session has expired. Please log in again.');
+    const body = await response.text().catch(() => '');
+    throw new Error(body || `Dashboard API request failed (${response.status}).`);
+  }
+  return response.json() as Promise<T>;
 }
 
-export async function fetchUserInfo(accessToken: string) {
-  return await callReturn<UserInfo>(
-    `/users/@me`,
-    withDiscord(accessToken, {
-      method: 'GET',
-    })
-  );
+export async function fetchUserInfo(_accessToken: string) {
+  const response = await apiJson<{ user: { id: string; username: string; global_name?: string; avatar: string | null } }>('/me');
+  return {
+    id: response.user.id,
+    username: response.user.global_name || response.user.username,
+    global_name: response.user.global_name || response.user.username,
+    discriminator: '0',
+    avatar: response.user.avatar,
+  } satisfies UserInfo;
 }
 
-export async function getGuilds(accessToken: string) {
-  return await callReturn<Guild[]>(
-    `/users/@me/guilds`,
-    withDiscord(accessToken, { method: 'GET' })
-  );
+export async function getGuilds(_accessToken: string) {
+  const response = await apiJson<{ guilds: Guild[] }>('/guilds');
+  return response.guilds;
 }
 
 export async function getGuild(accessToken: string, id: string) {
-  return await callReturn<Guild>(`/guilds/${id}`, withDiscord(accessToken, { method: 'GET' }));
+  const guilds = await getGuilds(accessToken);
+  const guild = guilds.find((item) => item.id === id);
+  if (!guild) throw new Error('Server not found or you do not have permission to manage it.');
+  return guild;
 }
 
 export function iconUrl(guild: Guild) {
-  return `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}`;
+  return guild.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}` : '';
 }
 
 export function avatarUrl(user: UserInfo) {
-  return `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}?size=512`;
+  return user.avatar
+    ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}?size=512`
+    : `https://cdn.discordapp.com/embed/avatars/${Number(BigInt(user.id) % 6n)}.png`;
 }
 
 export function bannerUrl(user: UserInfo) {
