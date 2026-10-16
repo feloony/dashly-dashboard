@@ -1,257 +1,232 @@
 import {
+  Badge,
   Box,
-  Center,
+  Card,
+  CardBody,
+  CardHeader,
   Circle,
   Flex,
   Grid,
   Heading,
   HStack,
-  Link,
-  Spacer,
-  Text,
-} from '@chakra-ui/layout';
-import {
-  Avatar,
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Hide,
   Icon,
-  IconButton,
-  Image,
   Progress,
+  SimpleGrid,
+  Stat,
+  StatHelpText,
+  StatLabel,
+  StatNumber,
+  Text,
+  VStack,
 } from '@chakra-ui/react';
-import { config } from 'config/common';
-import { BiSkipNext, BiSkipPrevious } from 'react-icons/bi';
-import { useColors } from 'theme';
 import { StyledChart } from 'components/chart/StyledChart';
-import { dashboard } from 'config/translations/dashboard';
-
 import {
-  BsMusicNoteBeamed,
-  BsPlay,
-  BsPlayBtn,
-  BsShareFill,
-  BsEyeFill as ViewIcon,
-} from 'react-icons/bs';
-import { AiFillDislike, AiFillLike } from 'react-icons/ai';
-import { IoPricetag } from 'react-icons/io5';
-import { FaRobot } from 'react-icons/fa';
-import { MdVoiceChat } from 'react-icons/md';
-import { ReactElement } from 'react';
+  FiActivity,
+  FiArrowDownRight,
+  FiArrowUpRight,
+  FiCheckCircle,
+  FiClock,
+  FiCloud,
+  FiCode,
+  FiDatabase,
+  FiGlobe,
+  FiZap,
+} from 'react-icons/fi';
+
+const requests = [
+  { method: 'GET', path: '/v1/projects', status: '200 OK', time: '84 ms', color: 'green' },
+  { method: 'POST', path: '/v1/events', status: '201 Created', time: '126 ms', color: 'green' },
+  { method: 'GET', path: '/v1/analytics', status: '200 OK', time: '97 ms', color: 'green' },
+  { method: 'GET', path: '/v1/unknown', status: '404 Not Found', time: '42 ms', color: 'red' },
+];
+
+const integrations = [
+  { name: 'REST API', detail: 'api.example.com', icon: FiGlobe, status: 'Connected', color: 'cyan' },
+  { name: 'Database', detail: 'PostgreSQL connection', icon: FiDatabase, status: 'Connected', color: 'purple' },
+  { name: 'Webhook events', detail: 'Event delivery endpoint', icon: FiZap, status: 'Needs setup', color: 'orange' },
+];
 
 export function ExampleDashboardView() {
-  const t = dashboard.useTranslations();
-  const { globalBg, brand } = useColors();
-
   return (
-    <Flex direction="column" gap={5}>
-      <HStack rounded="2xl" bg={brand} gap={2} p={5}>
-        <Circle color="white" bg="blackAlpha.300" p={4} display={{ base: 'none', md: 'block' }}>
-          <Icon as={FaRobot} w="60px" h="60px" />
-        </Circle>
-
-        <Flex direction="column" align="start" gap={1}>
-          <Text color="white" fontSize="2xl" fontWeight="bold">
-            {t.invite.title}
-          </Text>
-          <Text color="whiteAlpha.800">{t.invite.description}</Text>
-          <Button mt={3} as={Link} href={config.inviteUrl}>
-            {t.invite.bn}
-          </Button>
-        </Flex>
-      </HStack>
-      <Flex direction="column" gap={2} mt={3}>
-        <Heading size="md">{t.music.title}</Heading>
-        <Text variant="secondary">{t.music.description}</Text>
-        <MusicPlayer />
+    <VStack align="stretch" spacing={6} pb={10}>
+      <Flex justify="space-between" align={{ base: 'start', md: 'center' }} gap={4} wrap="wrap">
+        <Box>
+          <HStack spacing={2} mb={2}>
+            <Badge colorScheme="cyan" variant="subtle" px={2} py={1} rounded="full">WORKSPACE OVERVIEW</Badge>
+            <Text color="gray.500" fontSize="xs">DEMO DATA</Text>
+          </HStack>
+          <Heading size="xl" letterSpacing="-0.04em">Good to see you, developer.</Heading>
+          <Text color="gray.500" mt={2}>A clear view of your APIs, services, and activity.</Text>
+        </Box>
+        <HStack bg="rgba(34,197,94,0.08)" border="1px solid" borderColor="rgba(34,197,94,0.2)" px={3} py={2} rounded="xl">
+          <Circle size="8px" bg="green.400" />
+          <Text fontSize="sm" color="green.300" fontWeight="600">Systems operational</Text>
+        </HStack>
       </Flex>
-      <Grid templateColumns={{ base: '1fr', lg: '0.5fr 1fr' }} gap={3}>
-        <Card rounded="3xl" variant="primary">
-          <CardBody as={Center} p={4} flexDirection="column" gap={3}>
-            <Circle p={4} bg={globalBg}>
-              <Icon as={BsMusicNoteBeamed} w="80px" h="80px" />
-            </Circle>
-            <Text fontWeight="600">{t.vc.create}</Text>
+
+      <SimpleGrid columns={{ base: 1, sm: 2, xl: 4 }} spacing={4}>
+        <Metric title="API requests" value="24,892" change="+12.8%" icon={FiActivity} positive />
+        <Metric title="Success rate" value="99.94%" change="+0.4%" icon={FiCheckCircle} positive />
+        <Metric title="Avg. response" value="118 ms" change="-18 ms" icon={FiClock} positive />
+        <Metric title="Connected services" value="08" change="2 need setup" icon={FiCloud} />
+      </SimpleGrid>
+
+      <Grid templateColumns={{ base: '1fr', xl: 'minmax(0, 1.65fr) minmax(280px, 1fr)' }} gap={4}>
+        <Card variant="outline" borderColor="whiteAlpha.100" bg="whiteAlpha. [0.03]">
+          <CardHeader>
+            <Flex justify="space-between" align="start" gap={3}>
+              <Box>
+                <Heading size="md">Request activity</Heading>
+                <Text color="gray.500" fontSize="sm" mt={1}>API traffic over the last 7 days</Text>
+              </Box>
+              <Badge variant="outline" colorScheme="cyan">Last 7 days</Badge>
+            </Flex>
+          </CardHeader>
+          <CardBody pt={0}>
+            <HStack align="baseline" spacing={3} mb={2}>
+              <Heading size="2xl" letterSpacing="-0.04em">24.9k</Heading>
+              <HStack color="green.300" fontSize="sm" fontWeight="600">
+                <Icon as={FiArrowUpRight} />
+                <Text>12.8%</Text>
+              </HStack>
+            </HStack>
+            <StyledChart
+              options={{
+                chart: { toolbar: { show: false }, background: 'transparent', foreColor: '#8b95a7' },
+                colors: ['#22D3EE'],
+                dataLabels: { enabled: false },
+                stroke: { curve: 'smooth', width: 3 },
+                grid: { borderColor: 'rgba(148,163,184,0.12)', strokeDashArray: 4 },
+                xaxis: { categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], axisBorder: { show: false }, axisTicks: { show: false } },
+                yaxis: { labels: { formatter: (value: number) => value + 'k' } },
+                tooltip: { theme: 'dark' },
+              }}
+              series={[{ name: 'Requests', data: [2.8, 3.6, 3.1, 4.5, 3.9, 5.2, 6.1] }]}
+              height={250}
+              type="area"
+            />
           </CardBody>
         </Card>
-        <Flex direction="column" gap={3}>
-          <Text fontSize="xl" fontWeight="600">
-            {t.vc['created channels']}
-          </Text>
-          <VoiceChannelItem />
-          <VoiceChannelItem />
-        </Flex>
+
+        <Card variant="outline" borderColor="whiteAlpha.100">
+          <CardHeader>
+            <Heading size="md">Service health</Heading>
+            <Text color="gray.500" fontSize="sm" mt={1}>Latest checks across your workspace</Text>
+          </CardHeader>
+          <CardBody pt={0}>
+            <VStack align="stretch" spacing={5}>
+              <HealthRow name="API gateway" value="99.99%" detail="Uptime this month" />
+              <HealthRow name="Database" value="99.95%" detail="Uptime this month" />
+              <HealthRow name="Webhook delivery" value="98.70%" detail="Successful deliveries" />
+            </VStack>
+            <Box mt={6} p={3} rounded="xl" bg="whiteAlpha. [0.04]" border="1px solid" borderColor="whiteAlpha.100">
+              <HStack spacing={3}>
+                <Circle size="36px" bg="cyan.400" color="gray.900">
+                  <Icon as={FiCode} boxSize={4} />
+                </Circle>
+                <Box>
+                  <Text fontWeight="600" fontSize="sm">Built for your stack</Text>
+                  <Text color="gray.500" fontSize="xs">Bring your own API and integrations.</Text>
+                </Box>
+              </HStack>
+            </Box>
+          </CardBody>
+        </Card>
       </Grid>
-      <Flex direction="column" p={3}>
-        <Box w="fit-content">
-          <Heading size="lg">{t.command.title}</Heading>
-          <Text variant="secondary">{t.command.description}</Text>
-          <Button mt={2} leftIcon={<IoPricetag />}>
-            {t.pricing}
-          </Button>
-        </Box>
-        <TestChart />
-      </Flex>
-    </Flex>
+
+      <Grid templateColumns={{ base: '1fr', xl: 'minmax(0, 1.2fr) minmax(300px, 0.8fr)' }} gap={4}>
+        <Card variant="outline" borderColor="whiteAlpha.100">
+          <CardHeader>
+            <Flex justify="space-between" align="center">
+              <Box>
+                <Heading size="md">Recent API requests</Heading>
+                <Text color="gray.500" fontSize="sm" mt={1}>A sample of activity from your endpoints</Text>
+              </Box>
+              <Badge colorScheme="gray">Sample</Badge>
+            </Flex>
+          </CardHeader>
+          <CardBody pt={0}>
+            <VStack align="stretch" spacing={0} divider={<Box borderBottom="1px solid" borderColor="whiteAlpha.100" />}>
+              {requests.map((request) => (
+                <Flex key={request.path} py={3} gap={3} align="center" wrap="wrap">
+                  <Badge colorScheme={request.method === 'POST' ? 'purple' : 'cyan'} minW="52px" textAlign="center">{request.method}</Badge>
+                  <Text fontFamily="mono" fontSize="sm" flex={1} minW="120px">{request.path}</Text>
+                  <Badge colorScheme={request.color} variant="subtle">{request.status}</Badge>
+                  <Text color="gray.500" fontSize="xs" minW="52px" textAlign="right">{request.time}</Text>
+                </Flex>
+              ))}
+            </VStack>
+          </CardBody>
+        </Card>
+
+        <Card variant="outline" borderColor="whiteAlpha.100">
+          <CardHeader>
+            <Flex justify="space-between" align="center">
+              <Box>
+                <Heading size="md">Integrations</Heading>
+                <Text color="gray.500" fontSize="sm" mt={1}>Services in your workspace</Text>
+              </Box>
+              <Icon as={FiCloud} color="cyan.300" boxSize={5} />
+            </Flex>
+          </CardHeader>
+          <CardBody pt={0}>
+            <VStack align="stretch" spacing={3}>
+              {integrations.map((integration) => (
+                <HStack key={integration.name} p={3} border="1px solid" borderColor="whiteAlpha.100" rounded="xl" spacing={3}>
+                  <Circle size="40px" bg={integration.color + '.500'} color="white" bgOpacity={0.15}>
+                    <Icon as={integration.icon} boxSize={5} />
+                  </Circle>
+                  <Box flex={1} minW={0}>
+                    <Text fontWeight="600" fontSize="sm">{integration.name}</Text>
+                    <Text color="gray.500" fontSize="xs" noOfLines={1}>{integration.detail}</Text>
+                  </Box>
+                  <Badge colorScheme={integration.status === 'Connected' ? 'green' : 'orange'}>{integration.status}</Badge>
+                </HStack>
+              ))}
+            </VStack>
+            <Text color="gray.500" fontSize="xs" mt={4}>Example widgets only. Connect your own data source when configuring Dashly.</Text>
+          </CardBody>
+        </Card>
+      </Grid>
+    </VStack>
   );
 }
 
-function TestChart() {
-  const responsive: ApexResponsive = {
-    breakpoint: 500,
-    options: {
-      chart: {
-        width: '100%',
-        height: 'auto',
-      },
-    },
-  };
-
+function Metric({ title, value, change, icon, positive }: { title: string; value: string; change: string; icon: any; positive?: boolean }) {
   return (
-    <Grid templateColumns={{ base: '1fr', lg: '1fr 0.5fr' }}>
-      <StyledChart
-        options={{
-          colors: ['#4318FF', '#39B8FF'],
-          xaxis: {
-            categories: ['SEP', 'OCT', 'NOV', 'DEC', 'JAN', 'FEB'],
-          },
-          responsive: [responsive],
-        }}
-        series={[
-          {
-            name: 'Paid',
-            data: [50, 64, 48, 66, 49, 68],
-          },
-          {
-            name: 'Free Usage',
-            data: [30, 40, 24, 46, 20, 46],
-          },
-        ]}
-        height="300"
-        type="line"
-      />
-      <StyledChart
-        options={{
-          colors: ['#4318FF', '#39B8FF'],
-          labels: ['Paid', 'Free Usage'],
-          responsive: [responsive],
-        }}
-        series={[30, 1000]}
-        type="pie"
-        width="330"
-      />
-    </Grid>
-  );
-}
-
-function MusicPlayer() {
-  const t = dashboard.useTranslations();
-  const { cardBg, textColorSecondary, brand } = useColors();
-
-  return (
-    <>
-      <Flex direction="row" gap={5}>
-        <Image
-          rounded="xl"
-          src="https://cdns-images.dzcdn.net/images/artist/61bcbf8296b1669499064406c534d39d/500x500.jpg"
-          bg={brand}
-          w="200px"
-          h="200px"
-          display={{ base: 'none', md: 'block' }}
-          boxShadow="0px 5px 30px #ff5bff6e"
-          _dark={{
-            boxShadow: '0px 5px 30px #c03bc06e',
-          }}
-        />
-        <Flex
-          direction="column"
-          bg={cardBg}
-          rounded="xl"
-          gap={3}
-          p={3}
-          flex={1}
-          _light={{ boxShadow: '14px 17px 30px 4px rgb(112 144 176 / 13%)' }}
-        >
-          <HStack color={textColorSecondary} display={{ base: 'none', md: 'flex' }}>
-            <BsPlayBtn />
-            <Text>{t.music['now playing']}</Text>
-          </HStack>
-          <HStack>
-            <Avatar name="Stay with me" size="sm" />
-            <Text fontSize={{ base: 'lg', md: '2xl' }} fontWeight="bold">
-              ZUTOMAYO - Study Me
-            </Text>
-          </HStack>
-
-          <HStack mt="auto" justify="space-between" fontWeight="bold">
-            <IconButton
-              fontSize="4xl"
-              icon={<Icon as={BiSkipPrevious} />}
-              aria-label="previous"
-              variant="action"
-            />
-            <IconButton
-              p={1}
-              h="fit-content"
-              fontSize="4xl"
-              icon={<Icon as={BsPlay} />}
-              aria-label="pause"
-              variant="brand"
-              rounded="full"
-            />
-            <IconButton
-              fontSize="4xl"
-              icon={<Icon as={BiSkipNext} />}
-              aria-label="next"
-              variant="action"
-            />
-          </HStack>
-          <HStack px={3}>
-            <Text>1:28</Text>
-            <Progress w="full" value={50} />
-          </HStack>
-        </Flex>
-      </Flex>
-      <HStack mt={2}>
-        <PrimaryButton icon={<AiFillLike />}>1203</PrimaryButton>
-        <PrimaryButton icon={<AiFillDislike />}>297</PrimaryButton>
-        <PrimaryButton icon={<BsShareFill />}>103</PrimaryButton>
-        <Hide below="2sm">
-          <Spacer />
-          <PrimaryButton icon={<ViewIcon />}>4258</PrimaryButton>
-        </Hide>
-      </HStack>
-    </>
-  );
-}
-
-function PrimaryButton(props: { icon: ReactElement; children: string }) {
-  return (
-    <Button
-      leftIcon={props.icon}
-      variant="action"
-      _light={{ bg: 'white' }}
-      _dark={{ bg: 'navy.800' }}
-    >
-      {props.children}
-    </Button>
-  );
-}
-
-function VoiceChannelItem() {
-  const { brand, textColorSecondary } = useColors();
-
-  return (
-    <Card rounded="2xl" variant="primary">
-      <CardHeader as={HStack}>
-        <Icon as={MdVoiceChat} w="30px" h="30px" color={brand} />
-        <Text>My Channel</Text>
-      </CardHeader>
+    <Card variant="outline" borderColor="whiteAlpha.100">
       <CardBody>
-        <Text color={textColorSecondary}>89 Members</Text>
+        <Flex justify="space-between" align="start">
+          <Text color="gray.500" fontSize="sm">{title}</Text>
+          <Circle size="38px" bg="cyan.400" color="cyan.200" bgOpacity={0.12}>
+            <Icon as={icon} boxSize={5} />
+          </Circle>
+        </Flex>
+        <Stat mt={3}>
+          <StatNumber fontSize="2xl" letterSpacing="-0.04em">{value}</StatNumber>
+          <StatHelpText mb={0} mt={2}>
+            <HStack spacing={1} color={positive ? 'green.300' : 'orange.300'} fontSize="xs">
+              <Icon as={positive ? FiArrowUpRight : FiArrowDownRight} />
+              <Text>{change}</Text>
+              <Text color="gray.500">vs. previous period</Text>
+            </HStack>
+          </StatHelpText>
+        </Stat>
       </CardBody>
     </Card>
+  );
+}
+
+function HealthRow({ name, value, detail }: { name: string; value: string; detail: string }) {
+  const progress = parseFloat(value);
+  return (
+    <Box>
+      <Flex justify="space-between" align="center" mb={2}>
+        <Text fontSize="sm" fontWeight="600">{name}</Text>
+        <Text fontSize="sm" fontWeight="600">{value}</Text>
+      </Flex>
+      <Progress value={progress} size="xs" colorScheme="cyan" rounded="full" bg="whiteAlpha.100" />
+      <Text color="gray.500" fontSize="xs" mt={1}>{detail}</Text>
+    </Box>
   );
 }
