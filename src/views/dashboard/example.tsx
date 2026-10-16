@@ -14,7 +14,6 @@ import {
   SimpleGrid,
   Stat,
   StatHelpText,
-  StatLabel,
   StatNumber,
   Text,
   VStack,
@@ -72,7 +71,7 @@ export function ExampleDashboardView() {
       </SimpleGrid>
 
       <Grid templateColumns={{ base: '1fr', xl: 'minmax(0, 1.65fr) minmax(280px, 1fr)' }} gap={4}>
-        <Card variant="outline" borderColor="whiteAlpha.100" bg="whiteAlpha. [0.03]">
+        <Card variant="outline" borderColor="whiteAlpha.100" bg="whiteAlpha.50">
           <CardHeader>
             <Flex justify="space-between" align="start" gap={3}>
               <Box>
@@ -119,7 +118,7 @@ export function ExampleDashboardView() {
               <HealthRow name="Database" value="99.95%" detail="Uptime this month" />
               <HealthRow name="Webhook delivery" value="98.70%" detail="Successful deliveries" />
             </VStack>
-            <Box mt={6} p={3} rounded="xl" bg="whiteAlpha. [0.04]" border="1px solid" borderColor="whiteAlpha.100">
+            <Box mt={6} p={3} rounded="xl" bg="whiteAlpha.50" border="1px solid" borderColor="whiteAlpha.100">
               <HStack spacing={3}>
                 <Circle size="36px" bg="cyan.400" color="gray.900">
                   <Icon as={FiCode} boxSize={4} />
@@ -151,7 +150,7 @@ export function ExampleDashboardView() {
                 <Flex key={request.path} py={3} gap={3} align="center" wrap="wrap">
                   <Badge colorScheme={request.method === 'POST' ? 'purple' : 'cyan'} minW="52px" textAlign="center">{request.method}</Badge>
                   <Text fontFamily="mono" fontSize="sm" flex={1} minW="120px">{request.path}</Text>
-                  <Badge colorScheme={request.color} variant="subtle">{request.status}</Badge>
+                  <Badge colorScheme={request.color as "green" | "red"} variant="subtle">{request.status}</Badge>
                   <Text color="gray.500" fontSize="xs" minW="52px" textAlign="right">{request.time}</Text>
                 </Flex>
               ))}
