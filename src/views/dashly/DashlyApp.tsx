@@ -32,7 +32,7 @@ export function DashlyApp() {
   const [authType, setAuthType] = useState<Connection['authType']>('none');
   const [username, setUsername] = useState('');
   const [token, setToken] = useState('');
-  const [headers, setHeaders] = useState('{\\n  "Accept": "application/json"\\n}');
+  const [headers, setHeaders] = useState('{\n  "Accept": "application/json"\n}');
   const [widgetTitle, setWidgetTitle] = useState('');
   const [widgetConnection, setWidgetConnection] = useState('');
   const [widgetPath, setWidgetPath] = useState('/');
