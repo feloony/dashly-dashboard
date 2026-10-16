@@ -5,7 +5,7 @@ import svgrPlugin from 'vite-plugin-svgr';
 import path from 'path';
 
 export default defineConfig({
-  base: '/workingonit/',
+  base: '/dashly-dashboard/',
   plugins: [
     react({
       include: ['**/*.tsx', '**/*.jsx'],
