@@ -172,7 +172,7 @@ export function ExampleDashboardView() {
             <VStack align="stretch" spacing={3}>
               {integrations.map((integration) => (
                 <HStack key={integration.name} p={3} border="1px solid" borderColor="whiteAlpha.100" rounded="xl" spacing={3}>
-                  <Circle size="40px" bg={integration.color + '.500'} color="white" bgOpacity={0.15}>
+                  <Circle size="40px" bg="whiteAlpha.100" color={integration.color + ".300"}>
                     <Icon as={integration.icon} boxSize={5} />
                   </Circle>
                   <Box flex={1} minW={0}>
@@ -197,7 +197,7 @@ function Metric({ title, value, change, icon, positive }: { title: string; value
       <CardBody>
         <Flex justify="space-between" align="start">
           <Text color="gray.500" fontSize="sm">{title}</Text>
-          <Circle size="38px" bg="cyan.400" color="cyan.200" bgOpacity={0.12}>
+          <Circle size="38px" bg="cyan.900" color="cyan.200">
             <Icon as={icon} boxSize={5} />
           </Circle>
         </Flex>
