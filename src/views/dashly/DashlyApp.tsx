@@ -28,7 +28,7 @@ export function DashlyApp() {
   const [widgets, setWidgets] = useState<Widget[]>(() => read(STORAGE.widgets, []));
   const [backendUrl, setBackendUrl] = useState(() => localStorage.getItem(STORAGE.backend) || import.meta.env.VITE_API_ENDPOINT || '');
   const [connectionName, setConnectionName] = useState('');
-  const [baseUrl, setBaseUrl] = useState('');
+  const [baseUrl, setBaseUrl] = useState(() => localStorage.getItem(STORAGE.backend) || import.meta.env.VITE_API_ENDPOINT || '');
   const [authType, setAuthType] = useState<Connection['authType']>('none');
   const [username, setUsername] = useState('');
   const [token, setToken] = useState('');
@@ -108,7 +108,7 @@ export function DashlyApp() {
   const saveBackend = () => {
     const trimmed = backendUrl.trim().replace(/\/+$/, '');
     if (trimmed) { try { new URL(trimmed); } catch { return toast({ title: 'Backend URL must be absolute', status: 'error' }); } }
-    localStorage.setItem(STORAGE.backend, trimmed); setBackendUrl(trimmed);
+    localStorage.setItem(STORAGE.backend, trimmed); setBackendUrl(trimmed); if (trimmed) setBaseUrl(trimmed);
     toast({ title: 'Backend configuration saved', description: 'This is a base URL setting only; connect an integration to fetch API data.', status: 'success' });
   };
 
