@@ -1,9 +1,9 @@
 {
-  "short_name": "OpenUtility",
-  "name": "OpenUtility Dashboard",
+  "short_name": "Dashly",
+  "name": "Dashly — Your services. One dashboard.",
   "icons": [],
   "start_url": "/",
   "display": "standalone",
-  "theme_color": "#090b10",
-  "background_color": "#090b10"
+  "theme_color": "#0B0D12",
+  "background_color": "#0B0D12"
 }
