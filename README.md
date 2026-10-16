@@ -1,22 +1,18 @@
-# OpenUtility Dashboard
+# Dashly
 
-The web dashboard for **OpenUtility**, built with React, TypeScript, Vite, and Chakra UI.
+**Your services. One dashboard.**
 
-🌐 **Live site:** https://feloony.github.io/workingonit/
+Dashly is an open-source dashboard starter built with **React, TypeScript, Vite, and Chakra UI**. Fork it, customize the interface, and adapt its integration layer to your own APIs and services.
 
-## What’s included
+## Highlights
 
-- Discord sign-in and session-aware authentication
-- Backend API integration for account and server data
-- Responsive dashboard interface
-- GitHub Actions workflow for automatic GitHub Pages deployment
+- Responsive, dark-first dashboard interface
+- Reusable metric cards, charts, service-health panels, and activity tables
+- Modular React components and theme tokens
+- Chakra UI styling with Inter and JetBrains Mono
+- Vite development server and production builds
 
-## Recent updates
-
-- Improved API request handling and credentialed cookie-session support.
-- Only sends the bearer-token header when a session token is available, helping avoid unnecessary CORS preflight failures.
-- Added a clearer error when the backend API endpoint is not configured.
-- Updated the project documentation and deployment instructions.
+> The overview currently uses sample data. API widgets and provider connections must be configured for your own services. The inherited authentication/backend wiring is still Discord-oriented and is a separate step from the visual rebrand.
 
 ## Development
 
@@ -27,23 +23,19 @@ pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-Create a production build:
+Create and preview a production build:
 
 ```bash
 pnpm build
 pnpm preview
 ```
 
-## Deployment configuration
+## Configuration
 
-The GitHub Actions workflow builds and deploys the site when changes are pushed to `main`.
+- `VITE_API_ENDPOINT` — your backend API base URL.
+- `VITE_DISCORD_CLIENT_ID` — currently used by the inherited Discord OAuth/invite flow.
 
-Configure these frontend variables for deployment:
-
-- `VITE_API_ENDPOINT` — HTTPS URL of the backend API.
-- `VITE_DISCORD_CLIENT_ID` — Discord application client ID.
-
-These `VITE_*` values are public in the browser bundle. **Never put bot tokens, client secrets, or other private credentials in them.**
+Anything prefixed with `VITE_` is exposed in the browser bundle. **Never store private API keys, bot tokens, or client secrets in frontend environment variables.** Put secrets behind a trusted server-side API.
 
 ## License
 
