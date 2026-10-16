@@ -8,7 +8,7 @@
     "preview": "vite preview",
     "preinstall": "npx only-allow pnpm"
   },
-  "private": true,
+  "private": false,
   "dependencies": {
     "@chakra-ui/anatomy": "^2.0.1",
     "@chakra-ui/form-control": "^2.0.0",
