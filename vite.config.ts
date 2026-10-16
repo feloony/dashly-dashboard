@@ -4,8 +4,10 @@ import viteTsconfigPaths from 'vite-tsconfig-paths';
 import svgrPlugin from 'vite-plugin-svgr';
 import path from 'path';
 
+const repositoryName = process.env.GITHUB_REPOSITORY?.split('/')[1] || 'dashly';
+
 export default defineConfig({
-  base: '/workingonit/',
+  base: process.env.GITHUB_ACTIONS ? `/${repositoryName}/` : '/',
   plugins: [
     react({
       include: ['**/*.tsx', '**/*.jsx'],
