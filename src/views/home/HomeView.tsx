@@ -1,55 +1,68 @@
-import { Flex, Heading, SimpleGrid } from '@chakra-ui/layout';
-import { Card, CardBody, CardFooter, CardHeader, Icon } from '@chakra-ui/react';
-import { config } from 'config/common';
-import { MdMessage } from 'react-icons/md';
-import { useColorsExtend } from 'theme';
-import { useSettingsStore } from 'stores';
-import { languages, names } from 'config/translations/provider';
-import { SelectField } from 'components/forms/SelectField';
-import { common } from 'config/translations/common';
-import { home } from 'config/translations/home';
+import { Box, Flex, Heading, SimpleGrid, Text, VStack } from '@chakra-ui/react';
+import { Card, CardBody, CardHeader, Icon } from '@chakra-ui/react';
+import { FiCloud, FiCode, FiLayers } from 'react-icons/fi';
+import { useColors } from 'theme';
+
+const features = [
+  {
+    title: 'Bring your own APIs',
+    description: 'Connect the services and data sources that power your workflow.',
+    icon: FiCloud,
+  },
+  {
+    title: 'Composable widgets',
+    description: 'Build a dashboard from reusable cards, charts, and activity panels.',
+    icon: FiLayers,
+  },
+  {
+    title: 'Made for developers',
+    description: 'Fork the code, customize the theme, and deploy your own instance.',
+    icon: FiCode,
+  },
+];
 
 export function HomeView() {
-  const [lang, setLang] = useSettingsStore((s) => [s.lang, s.setLang]);
-  const t = home.useTranslations();
-  const { globalBg, textColorSecondary, brand } = useColorsExtend(
-    { brand: 'cyan.400' },
-    { brand: 'cyan.400' }
-  );
+  const { globalBg, textColorSecondary, brand } = useColors();
 
   return (
-    <Flex w="full" direction="column" gap={3} bg={globalBg}>
-      <Flex direction="column">
+    <Flex w="full" direction="column" gap={8} bg={globalBg} py={{ base: 4, lg: 8 }}>
+      <VStack align="start" spacing={4}>
+        <Text color="cyan.300" fontSize="sm" fontWeight="700" letterSpacing="0.14em">
+          OPEN-SOURCE DASHBOARD STARTER
+        </Text>
         <Heading
-          fontSize={{ base: '3xl', '2xl': '5xl' }}
-          bgGradient={`linear(to-l, blue.200, ${brand})`}
-          bgClip="text"
+          fontSize={{ base: '4xl', xl: '6xl' }}
+          lineHeight="1.04"
+          letterSpacing="-0.055em"
         >
-          {t['next gen discord bot']}
+          Your services.
+          <Box as="span" display="block" color={brand}>One dashboard.</Box>
         </Heading>
-        <Heading fontSize={{ base: '5xl', xl: '7xl' }}>{config.name}</Heading>
-      </Flex>
+        <Text color={textColorSecondary} fontSize={{ base: 'md', xl: 'lg' }} maxW="560px" lineHeight="1.8">
+          Dashly gives you a polished starting point for building your own API and service dashboard.
+          Make it yours, connect your stack, and deploy it where you want.
+        </Text>
+      </VStack>
 
-      <SelectField
-        value={{ label: names[lang], value: lang }}
-        onChange={(e) => setLang(e.value)}
-        options={languages.map(({ name, key }) => ({ label: name, value: key }))}
-        placeholder={<common.T text="select lang" />}
-      />
-
-      <SimpleGrid columns={{ base: 1, '3sm': 2, xl: 3 }} mt="2rem" gap={2}>
-        <Card>
-          <CardHeader fontSize="2xl" fontWeight="600" pb={1}>
-            {t['welcome messages']}
-          </CardHeader>
-          <CardBody py={0} color={textColorSecondary}>
-            {t['welcome messages description']}
-          </CardBody>
-          <CardFooter>
-            <Icon as={MdMessage} />
-          </CardFooter>
-        </Card>
+      <SimpleGrid columns={{ base: 1, '3sm': 2, xl: 1 }} gap={3}>
+        {features.map((feature) => (
+          <Card key={feature.title} variant="outline" borderColor="whiteAlpha.200" bg="whiteAlpha.50">
+            <CardHeader pb={2}>
+              <Icon as={feature.icon} color="cyan.300" boxSize={5} />
+              <Text mt={3} fontWeight="700">{feature.title}</Text>
+            </CardHeader>
+            <CardBody pt={0}>
+              <Text color={textColorSecondary} fontSize="sm" lineHeight="1.7">
+                {feature.description}
+              </Text>
+            </CardBody>
+          </Card>
+        ))}
       </SimpleGrid>
+
+      <Text color={textColorSecondary} fontSize="xs">
+        React · TypeScript · Vite · Chakra UI
+      </Text>
     </Flex>
   );
 }
