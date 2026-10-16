@@ -49,7 +49,7 @@ The backend URL setting is configuration only. Dashly does not ship a backend or
 
 ## Deployment
 
-Push to `main) to build and deploy with the included GitHub Actions workflow. GitHub Pages is suitable for the static frontend; integrations that need secrets or bypass CORS require a separate backend.
+Push to `main` to build and deploy with the included GitHub Actions workflow. GitHub Pages is suitable for the static frontend; integrations that need secrets or bypass CORS require a separate backend.
 
 ## License
 
